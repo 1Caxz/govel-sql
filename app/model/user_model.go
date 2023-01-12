@@ -1,5 +1,7 @@
 package model
 
+import "github.com/golang-jwt/jwt/v4"
+
 type LoginUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -14,6 +16,7 @@ type LoginUserResponse struct {
 	Pic      string `json:"pic"`
 	Location string `json:"location"`
 	Desc     string `json:"desc"`
+	jwt.StandardClaims
 }
 
 type RegisterUserRequest struct {
