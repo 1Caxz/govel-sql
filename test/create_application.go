@@ -10,7 +10,7 @@ import (
 func CreateApplication() (app *fiber.App) {
 	// Setup Configuration
 	configuration := config.New()
-	configuration.LoadEnv("../.env")
+	configuration.LoadEnv("../.env.test")
 
 	return bootstrap.Make(configuration)
 }
