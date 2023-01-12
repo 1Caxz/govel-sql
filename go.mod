@@ -6,6 +6,8 @@ require (
 	github.com/bxcodec/faker/v4 v4.0.0-beta.3
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/gofiber/fiber/v2 v2.40.1
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/joho/godotenv v1.4.0
 	github.com/mintance/go-uniqid v0.0.0-20180517195806-49cb885aad99
 	github.com/stretchr/testify v1.8.0
