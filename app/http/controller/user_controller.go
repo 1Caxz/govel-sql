@@ -3,11 +3,13 @@ package controller
 import (
 	"fmt"
 	"govel/app/exception"
+	"govel/app/helper"
 	"govel/app/model"
 	"govel/app/service"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 )
 
 type UserController struct {
@@ -93,10 +95,17 @@ func (ctx *UserController) Login(c *fiber.Ctx) error {
 		Password: c.FormValue("password"),
 	})
 
+	token := helper.MakeECDSAToken(&data, jwt.SigningMethodES256)
+
 	return c.Status(200).JSON(model.WebResponse{
 		Code:    200,
 		Message: "OK",
-		Data:    data,
+		Data: model.TokenResponse{
+			Type:   "bearer",
+			Alg:    "es256",
+			Token:  token,
+			Claims: data,
+		},
 	})
 }
 
