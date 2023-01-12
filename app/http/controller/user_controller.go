@@ -5,6 +5,7 @@ import (
 	"govel/app/exception"
 	"govel/app/model"
 	"govel/app/service"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -32,7 +33,7 @@ func (controller *UserController) Route(route fiber.Router) {
 }
 
 func (ctx *UserController) Index(c *fiber.Ctx) error {
-	page, err := c.ParamsInt("page", 1)
+	page, err := strconv.Atoi(c.Query("page", "1"))
 	exception.PanicIfNeeded(err)
 
 	data, isNextPage := ctx.service.List(model.GetUserRequest{
@@ -45,7 +46,7 @@ func (ctx *UserController) Index(c *fiber.Ctx) error {
 		return c.Status(200).JSON(model.PaginateResponse{
 			Code:    200,
 			Message: "OK",
-			Next:    fmt.Sprintf(c.OriginalURL()+"?page=%d", page+1),
+			Next:    fmt.Sprintf(c.BaseURL()+c.Path()+"?page=%d", page+1),
 			Data:    data,
 		})
 	}
@@ -59,7 +60,7 @@ func (ctx *UserController) Index(c *fiber.Ctx) error {
 }
 
 func (ctx *UserController) Search(c *fiber.Ctx) error {
-	page, err := c.ParamsInt("page", 1)
+	page, err := strconv.Atoi(c.Query("page", "1"))
 	exception.PanicIfNeeded(err)
 
 	data, isNextPage := ctx.service.SearchList(model.GetUserRequest{
@@ -73,7 +74,7 @@ func (ctx *UserController) Search(c *fiber.Ctx) error {
 		return c.Status(200).JSON(model.PaginateResponse{
 			Code:    200,
 			Message: "OK",
-			Next:    fmt.Sprintf(c.OriginalURL()+"?page=%d", page+1),
+			Next:    fmt.Sprintf(c.BaseURL()+c.Path()+"?page=%d", page+1),
 			Data:    data,
 		})
 	}
