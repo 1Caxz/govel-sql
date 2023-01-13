@@ -11,7 +11,7 @@ import (
 
 func Seeder(db *gorm.DB) {
 	for i := 0; i < 30; i++ {
-		hashed, err := bcrypt.GenerateFromPassword([]byte(faker.Word()), bcrypt.DefaultCost)
+		hashed, err := bcrypt.GenerateFromPassword([]byte("rahasia"), bcrypt.DefaultCost)
 		exception.PanicIfNeeded(err)
 		db.Create(&entity.User{
 			Email:    faker.Word() + "@gmail.com",
