@@ -3,10 +3,12 @@ package service
 import (
 	"govel/app/entity"
 	"govel/app/exception"
+	"govel/app/helper"
 	"govel/app/model"
 	"govel/app/repository"
 	"govel/app/validation"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/mintance/go-uniqid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,6 +21,35 @@ func NewUserService(userRepository *repository.UserRepository) UserService {
 	return &userServiceImpl{
 		UserRepository: *userRepository,
 	}
+}
+
+func (service *userServiceImpl) RefreshToken(request model.RefreshTokenUserRequest) (response model.RefreshTokenUserResponse) {
+	// Validate the user request data
+	validation.UserRefreshTokenValidate(request)
+
+	// Parsing the token
+	token := helper.ParseECDSAToken(request.Token, jwt.SigningMethodES256)
+
+	// Check user is exist
+	claims := token.Claims.(jwt.MapClaims)
+	user := service.UserRepository.FetchByEmail(claims["email"].(string))
+	if user == nil {
+		exception.PanicResponse("Token invalid.")
+	}
+
+	// Response the data
+	response = model.RefreshTokenUserResponse{
+		Id:       user.ID,
+		SocialId: user.SocialId,
+		Email:    user.Email,
+		Nick:     user.Nick,
+		Name:     user.Name,
+		Pic:      user.Pic,
+		Location: user.Location,
+		Desc:     user.Desc,
+		Role:     user.Role,
+	}
+	return response
 }
 
 func (service *userServiceImpl) Login(request model.LoginUserRequest) (response model.LoginUserResponse) {
@@ -47,6 +78,7 @@ func (service *userServiceImpl) Login(request model.LoginUserRequest) (response 
 		Pic:      user.Pic,
 		Location: user.Location,
 		Desc:     user.Desc,
+		Role:     user.Role,
 	}
 	return response
 }
@@ -183,6 +215,13 @@ func (service *userServiceImpl) Update(request model.UpdateUserRequest) (respons
 	// Validate the user request data
 	validation.UserUpdateValidate(request)
 
+	// Check if id not same and role is not admin
+	token := helper.ParseECDSAToken(request.Token, jwt.SigningMethodES256)
+	claims := token.Claims.(jwt.MapClaims)
+	if int(claims["id"].(float64)) != request.Id && int(claims["role"].(float64)) == 1 {
+		exception.PanicResponse("Unauthorized")
+	}
+
 	// Update the data
 	data := entity.User{
 		ID:       uint(request.Id),
@@ -194,12 +233,7 @@ func (service *userServiceImpl) Update(request model.UpdateUserRequest) (respons
 
 	// Response the new data
 	response = model.UpdateUserResponse{
-		Id:       user.ID,
-		SocialId: user.SocialId,
-		Email:    user.Email,
-		Nick:     user.Nick,
 		Name:     user.Name,
-		Pic:      user.Pic,
 		Location: user.Location,
 		Desc:     user.Desc,
 	}
@@ -209,6 +243,13 @@ func (service *userServiceImpl) Update(request model.UpdateUserRequest) (respons
 func (service *userServiceImpl) Delete(request model.DeleteUserRequest) (response model.DeleteUserResponse) {
 	// Validate the user request data
 	validation.UserDeleteValidate(request)
+
+	// Check if id not same and role is not admin
+	token := helper.ParseECDSAToken(request.Token, jwt.SigningMethodES256)
+	claims := token.Claims.(jwt.MapClaims)
+	if int(claims["id"].(float64)) != request.Id && int(claims["role"].(float64)) == 1 {
+		exception.PanicResponse("Unauthorized")
+	}
 
 	// Delete the data
 	service.UserRepository.Delete(uint(request.Id))
