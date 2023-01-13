@@ -2,6 +2,23 @@ package model
 
 import "github.com/golang-jwt/jwt/v4"
 
+type RefreshTokenUserRequest struct {
+	Token string `json:"token"`
+}
+
+type RefreshTokenUserResponse struct {
+	Id       uint   `json:"id"`
+	SocialId string `json:"social_id"`
+	Email    string `json:"email"`
+	Nick     string `json:"nick"`
+	Name     string `json:"name"`
+	Pic      string `json:"pic"`
+	Location string `json:"location"`
+	Desc     string `json:"desc"`
+	Role     int    `json:"role"`
+	jwt.StandardClaims
+}
+
 type LoginUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -16,6 +33,7 @@ type LoginUserResponse struct {
 	Pic      string `json:"pic"`
 	Location string `json:"location"`
 	Desc     string `json:"desc"`
+	Role     int    `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -39,6 +57,7 @@ type RegisterUserResponse struct {
 }
 
 type UpdateUserRequest struct {
+	Token    string `json:"token"`
 	Id       int    `json:"id"`
 	Name     string `json:"name"`
 	Location string `json:"location"`
@@ -46,18 +65,14 @@ type UpdateUserRequest struct {
 }
 
 type UpdateUserResponse struct {
-	Id       uint   `json:"id"`
-	SocialId string `json:"social_id"`
-	Email    string `json:"email"`
-	Nick     string `json:"nick"`
 	Name     string `json:"name"`
-	Pic      string `json:"pic"`
 	Location string `json:"location"`
 	Desc     string `json:"desc"`
 }
 
 type DeleteUserRequest struct {
-	Id int `json:"id"`
+	Token string `json:"token"`
+	Id    int    `json:"id"`
 }
 
 type DeleteUserResponse struct {
