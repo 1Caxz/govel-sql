@@ -14,8 +14,9 @@ type PaginateResponse struct {
 }
 
 type TokenResponse struct {
-	Type   string      `json:"type"`
-	Alg    string      `json:"alg"`
-	Token  string      `json:"token"`
-	Claims interface{} `json:"claims"`
+	Type            string      `json:"type"`
+	Alg             string      `json:"alg"`
+	Token           string      `json:"token"`
+	RefreshTokenURL string      `json:"refresh_token_url"`
+	Claims          interface{} `json:"claims"`
 }
