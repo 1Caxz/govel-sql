@@ -3,6 +3,8 @@ package service
 import "govel/app/model"
 
 type UserService interface {
+	RefreshToken(request model.RefreshTokenUserRequest) (response model.RefreshTokenUserResponse)
+
 	Login(request model.LoginUserRequest) (response model.LoginUserResponse)
 
 	Register(request model.RegisterUserRequest) (response model.RegisterUserResponse)
