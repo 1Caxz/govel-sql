@@ -7,6 +7,18 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
+func UserRefreshTokenValidate(request model.RefreshTokenUserRequest) {
+	err := validation.ValidateStruct(&request,
+		validation.Field(&request.Token, validation.Required),
+	)
+
+	if err != nil {
+		panic(exception.ValidationError{
+			Message: err.Error(),
+		})
+	}
+}
+
 func UserLoginValidate(request model.LoginUserRequest) {
 	err := validation.ValidateStruct(&request,
 		validation.Field(&request.Email, validation.Required),
@@ -43,6 +55,8 @@ func UserRegisterValidate(request model.RegisterUserRequest) {
 
 func UserUpdateValidate(request model.UpdateUserRequest) {
 	err := validation.ValidateStruct(&request,
+		validation.Field(&request.Token, validation.Required),
+		validation.Field(&request.Id, validation.Required),
 		validation.Field(&request.Name, validation.Required),
 		validation.Field(&request.Location, validation.Required),
 		validation.Field(&request.Desc, validation.Required),
@@ -57,6 +71,7 @@ func UserUpdateValidate(request model.UpdateUserRequest) {
 
 func UserDeleteValidate(request model.DeleteUserRequest) {
 	err := validation.ValidateStruct(&request,
+		validation.Field(&request.Token, validation.Required),
 		validation.Field(&request.Id, validation.Required, validation.Min(1)),
 	)
 
